@@ -1,6 +1,8 @@
 package dropbox;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class FileCache {
@@ -12,9 +14,10 @@ public class FileCache {
 		new File(ROOT).mkdir();
 	}
 
-	public List<File> getFiles(String username) {
+	public File[] getFiles() {
 		// TODO
-		return null;
+		File folder = new File(ROOT);
+		return folder.listFiles();
 	}
 
 	public void addChunk(Chunk chunk) {
@@ -23,5 +26,20 @@ public class FileCache {
 
 	public Chunk getChunk(String username, String filename, int start, int length) {
 		return new Chunk(username, filename, start, length);
+	}
+	
+	public String[] getFileNames(){
+		File folder = new File(ROOT);
+		File[] listOfFiles = folder.listFiles();
+		String[] listOfFileNames = new String[listOfFiles.length];
+
+		for (int i = 0; i< listOfFiles.length; i++) {
+			File file = listOfFiles[i];
+		    if (file.isFile()) {
+		    	listOfFileNames[i] = file.getName();
+		    }
+		}
+	
+		return listOfFileNames;
 	}
 }
