@@ -37,4 +37,13 @@ public class Server implements ReaderListener {
 	public void onCloseSocket(Socket socket) {
 		IOUtils.closeQuietly(socket);
 	}
+	
+	public static void main(String [] args){
+		try {
+			new Server();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
