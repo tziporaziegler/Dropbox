@@ -23,6 +23,7 @@ public class ReaderThread extends Thread {
 			while (true) {
 				Message msg = (Message) objIn.readObject();
 				listener.onObjectRead(msg);
+				//TODO send in socket with message
 			}
 			// in.close();
 			// onjIn.close();
