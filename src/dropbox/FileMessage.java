@@ -1,19 +1,18 @@
 package dropbox;
 
-public class FileMessage implements Message {
-	private static final long serialVersionUID = 1L;
-	private String name;
+//import java.io.File;
+
+public class FileMessage{
+
+	private String fileName;
 	private long lastModified;
-	private long size;
-
-	public FileMessage(String name, long lastModified, long size) {
-		this.name = name;
+	private int fileSize;
+	
+	public FileMessage (String fileName, long lastModified, int fileSize){
+		//super(fileName);
+		this.fileName = fileName;
 		this.lastModified = lastModified;
-		this.size = size;
+		this.fileSize = fileSize;
 	}
-
-	@Override
-	public void preform(FileCache cache) {
-
-	}
+	
 }
