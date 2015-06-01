@@ -24,40 +24,37 @@ public class SyncMessage extends Message {
 	@Override
 	public void perform(FileCache cache, Socket socket) {
 		String fileName = splitMsg[0];
+		long lastModified = Long.valueOf(splitMsg[1]);
+		int fileSize = Integer.valueOf(splitMsg[2]);
 
-		// get list of all files in client root directory and 
+		// get list of all files in client root directory and
 		File folder = new File(cache.getRoot());
 		File[] listOfFiles = folder.listFiles();
 
+		boolean found = false;
+
 		try {
-			for (File x : listOfFiles) {
+			for (File clientFile : listOfFiles) {
 
-				// get the file from the server cache
-				FileCache serverCache = new FileCache("/dropbox_server/");
-				File file = serverCache.getFile(fileName);
-
-				//see if this file
+				// see if this file
 				// exists in the clients directory
-				if (x.getName().equals(fileName)) {
+				if (clientFile.getName().equals(fileName)) {
 					// file is found so now compare when last modified from
 					// files in server's cache
-					if (x.lastModified() < file.lastModified()) {
+					found = true;
+					if (clientFile.lastModified() < lastModified) {
 						// now need to send download msg to server
 						// DOWNLOAD [filename] [offset] [chunk size]
 
 						send("DOWNLOAD " + fileName + " " + 0
-								+ (file.length() >= 512 ? 512 : file.length()),
-								socket);
-
+								+ (fileSize >= 512 ? 512 : fileSize), socket);
 					}
 				}
-				// file is not on clients dir so send download msg
-				else {
-					send("DOWNLOAD " + fileName + " " + 0
-							+ (file.length() >= 512 ? 512 : file.length()),
-							socket);
-				}
-
+			}
+			// file is not on clients dir so send download msg
+			if (!found) {
+				send("DOWNLOAD " + fileName + " " + 0
+						+ (fileSize >= 512 ? 512 : fileSize), socket);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
