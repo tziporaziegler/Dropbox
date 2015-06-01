@@ -4,7 +4,7 @@ import java.net.Socket;
 
 public interface ReaderListener {
 
-	void onObjectRead(Message msg);
+	void onLineRead(String line);
 
 	void onCloseSocket(Socket socket);
 

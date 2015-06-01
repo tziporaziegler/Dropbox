@@ -1,8 +1,9 @@
 package dropbox;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class ReaderThread extends Thread {
@@ -18,17 +19,14 @@ public class ReaderThread extends Thread {
 	public void run() {
 		try {
 			InputStream in = socket.getInputStream();
-			ObjectInputStream objIn = new ObjectInputStream(in);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
-			while (true) {
-				Message msg = (Message) objIn.readObject();
-				listener.onObjectRead(msg);
-				//TODO send in socket with message
+			String line;
+			while ((line = reader.readLine()) != null) {
+				listener.onLineRead(line);
 			}
-			// in.close();
-			// onjIn.close();
 		}
-		catch (ClassNotFoundException | IOException e) {
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 		listener.onCloseSocket(socket);

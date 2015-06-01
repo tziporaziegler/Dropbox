@@ -8,6 +8,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -22,8 +24,8 @@ public class Client extends JFrame implements ReaderListener {
 	private JList<String> list;
 	private JButton listButton;
 	private Socket socket;
-	private Client client = this;
 	private FileCache cache;
+	private List<Message> validMsgs;
 
 	public Client() throws UnknownHostException, IOException {
 		setTitle("Dropbox");
@@ -45,10 +47,17 @@ public class Client extends JFrame implements ReaderListener {
 
 		socket = new Socket("localhost", 6003);
 		new ReaderThread(socket, this).start();
+
+		validMsgs = new ArrayList<Message>();
+		validMsgs.add(new ChunkServer());
+		validMsgs.add(new FilesMessage());
+		validMsgs.add(new FilesMessage());
+		validMsgs.add(new SyncMessage());
+
 		setVisible(true);
 	}
 
-	private void send(Message msg) throws IOException {
+	private void send(String msg) throws IOException {
 		OutputStream out = socket.getOutputStream();
 		ObjectOutputStream objOut = new ObjectOutputStream(out);
 		objOut.writeObject(msg);
@@ -64,7 +73,7 @@ public class Client extends JFrame implements ReaderListener {
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			try {
-				send(new ListMessage(client));
+				send("LIST...");
 			}
 			catch (IOException e) {
 				e.printStackTrace();
@@ -73,8 +82,13 @@ public class Client extends JFrame implements ReaderListener {
 	};
 
 	@Override
-	public void onObjectRead(Message msg) {
-		msg.preform(cache);
+	public void onLineRead(String line) {
+		for (Message msg : validMsgs) {
+			if (msg.matches(line)) {
+				msg.perform(cache, socket);
+				break;
+			}
+		}
 	}
 
 	@Override
