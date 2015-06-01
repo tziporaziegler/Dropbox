@@ -26,7 +26,7 @@ import org.apache.commons.io.IOUtils;
 public class Client extends JFrame implements ReaderListener {
 	private static final long serialVersionUID = 1L;
 	private Socket socket;
-	private FileCache cache = new FileCache();
+	private FileCache cache = new FileCache("/dropbox/");
 	private List<Message> validMsgs;
 
 	private String[] filenames;
@@ -94,8 +94,7 @@ public class Client extends JFrame implements ReaderListener {
 			// once the correct amount of filenames are received, add the list
 			// to the jFrame
 			list.setListData(filenames);
-		}
-		else {
+		} else {
 			listPlace++;
 		}
 	}
@@ -123,8 +122,7 @@ public class Client extends JFrame implements ReaderListener {
 		public void actionPerformed(ActionEvent event) {
 			try {
 				send("LIST");
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -163,15 +161,18 @@ public class Client extends JFrame implements ReaderListener {
 					// add 512 to offset for next chunk
 					offset += 512;
 
-					// CHUNK [filename] [last modified] [filesize] [offset]
+					// CHUnK [filename] [last modified] [filesize] [offset]
 					// [base64 encoded bytes]
 					// sends chunk message to be handled by server
-					send("CHUNK " + file.getName() + " " + file.lastModified() + " " + file.length() + " " + offset + " " + base64.toString());
-					System.out.println("CHUNK " + file.getName() + " " + file.lastModified() + " " + file.length() + " " + offset + " "
+					send("CHUNK " + file.getName() + " " + file.lastModified()
+							+ " " + file.length() + " " + offset + " "
 							+ base64.toString());
+
+					// System.out.println("CHUNK " + file.getName() + " "
+					// + file.lastModified() + " " + file.length() + " "
+					// + offset + " " + base64.toString());
 				}
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -180,8 +181,7 @@ public class Client extends JFrame implements ReaderListener {
 	public static void main(String[] args) {
 		try {
 			new Client();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

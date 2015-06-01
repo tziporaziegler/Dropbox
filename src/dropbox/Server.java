@@ -14,7 +14,7 @@ public class Server implements ReaderListener {
 	private Socket socket;
 	private ArrayList<Socket> sockets;
 	private LinkedBlockingQueue<Message> msgQueue;
-	private FileCache cache = new FileCache();
+	private FileCache cache = new FileCache("/dropbox_server/");
 	private List<Message> validMsgs;
 
 	public Server() throws IOException {
