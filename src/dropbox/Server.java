@@ -51,6 +51,7 @@ public class Server implements ReaderListener {
 		}
 	}
 
+
 	public static void main(String[] args) {
 		try {
 			new Server();

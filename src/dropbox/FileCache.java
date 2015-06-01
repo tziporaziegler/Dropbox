@@ -45,4 +45,14 @@ public class FileCache {
 	public String getRoot(){
 		return root;
 	}
+	
+	public File getFile(String fileName){
+		File[] files = getFiles();
+		for(File x:files){
+			if(x.getName().equals(fileName)){
+				return x;
+			}
+		}
+		return null;	
+	}
 }
