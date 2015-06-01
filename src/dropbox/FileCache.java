@@ -4,7 +4,7 @@ import java.io.File;
 
 public class FileCache {
 	//FIXME won't automatically generate file on mac since need authentication
-	private static final String ROOT = "/rivka/dropbox/";
+	private static final String ROOT = "/dropbox/";
 
 	public FileCache() {
 		// create dropbox directory
@@ -20,7 +20,7 @@ public class FileCache {
 	public void addChunk(Chunk chunk) {
 
 	}
-
+ 
 	public Chunk getChunk(String username, String filename, int start, int length) {
 		return new Chunk(username, filename, start, length);
 	}

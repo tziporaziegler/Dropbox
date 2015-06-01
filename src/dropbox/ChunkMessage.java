@@ -10,7 +10,7 @@ public abstract class ChunkMessage extends Message {
 	protected int offset;
 	protected String base64EncodedBytes;
 
-	// CHUCK [filename] [last modified] [filesize] [offset] [base64 encoded bytes]
+	// CHUNK [filename] [last modified] [filesize] [offset] [base64 encoded bytes]
 	protected final static Pattern PATTERN = Pattern.compile("CHUNK\\s\\w+\\s(\\d+\\s){3}[A-Za-z0-9=-]");
 
 	@Override

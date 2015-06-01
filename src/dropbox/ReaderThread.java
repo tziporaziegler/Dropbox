@@ -23,7 +23,7 @@ public class ReaderThread extends Thread {
 
 			String line;
 			while ((line = reader.readLine()) != null) {
-				listener.onLineRead(line);
+				listener.onLineRead(line, socket);
 			}
 		}
 		catch (IOException e) {

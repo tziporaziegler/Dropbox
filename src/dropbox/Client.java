@@ -94,7 +94,8 @@ public class Client extends JFrame implements ReaderListener {
 			// once the correct amount of filenames are received, add the list
 			// to the jFrame
 			list.setListData(filenames);
-		} else {
+		}
+		else {
 			listPlace++;
 		}
 	}
@@ -102,7 +103,7 @@ public class Client extends JFrame implements ReaderListener {
 	// Whenever a new line is read in, determine what the Message is by
 	// comparing it to all the valid Message Patterns
 	@Override
-	public void onLineRead(String line) {
+	public void onLineRead(String line, Socket socket) {
 		for (Message msg : validMsgs) {
 			if (msg.matches(line)) {
 				msg.perform(cache, socket);
@@ -122,7 +123,8 @@ public class Client extends JFrame implements ReaderListener {
 		public void actionPerformed(ActionEvent event) {
 			try {
 				send("LIST");
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -161,17 +163,15 @@ public class Client extends JFrame implements ReaderListener {
 					// add 512 to offset for next chunk
 					offset += 512;
 
-					// CHUnK [filename] [last modified] [filesize] [offset]
+					// CHUNK [filename] [last modified] [filesize] [offset]
 					// [base64 encoded bytes]
 					// sends chunk message to be handled by server
-					send("CHUNK " + file.getName() + " " + file.lastModified()
-							+ " " + file.length() + " " + offset + " "
+					send("CHUNK " + file.getName() + " " + file.lastModified() + " " + file.length() + " " + offset + " " + base64.toString());
+					System.out.println("CHUNK " + file.getName() + " " + file.lastModified() + " " + file.length() + " " + offset + " "
 							+ base64.toString());
-					System.out.println("CHUNK " + file.getName() + " "
-							+ file.lastModified() + " " + file.length() + " "
-							+ offset + " " + base64.toString());
 				}
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -180,7 +180,8 @@ public class Client extends JFrame implements ReaderListener {
 	public static void main(String[] args) {
 		try {
 			new Client();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

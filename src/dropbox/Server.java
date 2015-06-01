@@ -42,7 +42,7 @@ public class Server implements ReaderListener {
 	}
 
 	@Override
-	public void onLineRead(String line) {
+	public void onLineRead(String line, Socket socket) {
 		for (Message msg : validMsgs) {
 			if (msg.matches(line)) {
 				msg.perform(cache, socket);
