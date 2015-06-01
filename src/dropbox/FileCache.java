@@ -4,7 +4,7 @@ import java.io.File;
 
 public class FileCache {
 	//FIXME won't automatically generate file on mac since need authentication
-	private static final String ROOT = "/dropbox/";
+	private static final String ROOT = "/rivka/dropbox/";
 
 	public FileCache() {
 		// create dropbox directory
