@@ -4,33 +4,30 @@ import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// import java.io.File;
+public class FileMessage extends Message {
+	private String msg;
+	private Client client;
 
-public class FileMessage implements Message {
-	private static final long serialVersionUID = 1L;
-	private String fileName;
-	private long lastModified;
-	private int fileSize;
+	// FILE [filename] [last modified] [filesize]
+	private final static Pattern PATTERN = Pattern.compile("FILE\\s\\w+\\s(\\d+\\s){2}");
 
-	// TODO create correct pattern
-	private final static Pattern PATTERN = Pattern.compile("FILE...");
+	public FileMessage(Client client) {
+		this.client = client;
+	}
 
 	@Override
 	public boolean matches(String msg) {
+		this.msg = msg;
 		Matcher matcher = PATTERN.matcher(msg);
-		return matcher.matches();
-	}
-
-	public FileMessage(String fileName, long lastModified, int fileSize) {
-		// super(fileName);
-		this.fileName = fileName;
-		this.lastModified = lastModified;
-		this.fileSize = fileSize;
+		boolean matches = matcher.matches();
+		return matches;
 	}
 
 	@Override
 	public void perform(FileCache cache, Socket socket) {
-		// TODO Auto-generated method stub
+		String[] splitMsg = msg.split(" ");
 
+		// add the filename to Client's list of files
+		client.addFile(splitMsg[1]);
 	}
 }

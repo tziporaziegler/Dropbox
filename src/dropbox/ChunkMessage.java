@@ -3,16 +3,15 @@ package dropbox;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class ChunkMessage implements Message {
-	private static final long serialVersionUID = 1L;
-	private String filename;
-	private long lastModified;
-	private long filesize;
-	private int offset;
-	private String base64EncodedBytes;
+public abstract class ChunkMessage extends Message {
+	protected String filename;
+	protected long lastModified;
+	protected long filesize;
+	protected int offset;
+	protected String base64EncodedBytes;
 
-	// TODO create correct pattern
-	protected final static Pattern PATTERN = Pattern.compile("CHUNK...");
+	// CHUCK [filename] [last modified] [filesize] [offset] [base64 encoded bytes]
+	protected final static Pattern PATTERN = Pattern.compile("CHUNK\\s\\w+\\s(\\d+\\s){3}[A-Za-z0-9=-]");
 
 	@Override
 	public boolean matches(String msg) {

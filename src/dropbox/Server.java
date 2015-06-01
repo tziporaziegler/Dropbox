@@ -14,7 +14,7 @@ public class Server implements ReaderListener {
 	private Socket socket;
 	private ArrayList<Socket> sockets;
 	private LinkedBlockingQueue<Message> msgQueue;
-	private FileCache cache;
+	private FileCache cache = new FileCache();
 	private List<Message> validMsgs;
 
 	public Server() throws IOException {
@@ -48,6 +48,15 @@ public class Server implements ReaderListener {
 				msg.perform(cache, socket);
 				break;
 			}
+		}
+	}
+
+	public static void main(String[] args) {
+		try {
+			new Server();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

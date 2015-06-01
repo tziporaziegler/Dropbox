@@ -4,11 +4,10 @@ import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SyncMessage implements Message {
-	private static final long serialVersionUID = 1L;
+public class SyncMessage extends Message {
 
-	// TODO create correct pattern
-	private final static Pattern PATTERN = Pattern.compile("SYNC...");
+	// SYNC [filename] [last modified] [filesize]
+	private final static Pattern PATTERN = Pattern.compile("SYNC\\s\\w+\\s(\\d+\\s){2}");
 
 	@Override
 	public boolean matches(String msg) {

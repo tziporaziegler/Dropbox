@@ -3,7 +3,8 @@ package dropbox;
 import java.io.File;
 
 public class FileCache {
-	private static final String ROOT = "dropbox/";
+	//FIXME won't automatically generate file on mac since need authentication
+	private static final String ROOT = "/dropbox/";
 
 	public FileCache() {
 		// create dropbox directory
@@ -37,5 +38,9 @@ public class FileCache {
 		}
 
 		return listOfFileNames;
+	}
+	
+	public String getRoot(){
+		return ROOT;
 	}
 }
