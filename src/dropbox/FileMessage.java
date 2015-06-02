@@ -29,5 +29,7 @@ public class FileMessage extends Message {
 
 		// add the filename to Client's list of files
 		client.addFile(splitMsg[1]);
+		
+		//TODO are you supposed to now see if need to download/upload anything??
 	}
 }

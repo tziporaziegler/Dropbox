@@ -7,12 +7,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SyncMessage extends Message {
-
 	private String[] splitMsg;
 
 	// SYNC [filename] [last modified] [filesize]
-	private final static Pattern PATTERN = Pattern
-			.compile("SYNC\\s\\w+\\s(\\d+\\s){2}");
+	private final static Pattern PATTERN = Pattern.compile("SYNC\\s\\w+\\s(\\d+\\s){2}");
 
 	@Override
 	public boolean matches(String msg) {
@@ -35,28 +33,24 @@ public class SyncMessage extends Message {
 
 		try {
 			for (File clientFile : listOfFiles) {
-
-				// see if this file
-				// exists in the clients directory
+				// see if this file exists in the clients directory
 				if (clientFile.getName().equals(fileName)) {
-					// file is found so now compare when last modified from
-					// files in server's cache
+					// file is found so now compare when last modified from files in server's cache
 					found = true;
 					if (clientFile.lastModified() < lastModified) {
 						// now need to send download msg to server
 						// DOWNLOAD [filename] [offset] [chunk size]
-
-						send("DOWNLOAD " + fileName + " " + 0
-								+ (fileSize >= 512 ? 512 : fileSize), socket);
+						send("DOWNLOAD " + fileName + " " + 0 + (fileSize >= 512 ? 512 : fileSize), socket);
 					}
+					break;
 				}
 			}
 			// file is not on clients dir so send download msg
 			if (!found) {
-				send("DOWNLOAD " + fileName + " " + 0
-						+ (fileSize >= 512 ? 512 : fileSize), socket);
+				send("DOWNLOAD " + fileName + " " + 0 + (fileSize >= 512 ? 512 : fileSize), socket);
 			}
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

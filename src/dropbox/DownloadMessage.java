@@ -17,6 +17,6 @@ public class DownloadMessage extends Message {
 
 	@Override
 	public void perform(FileCache cache, Socket socket) {
-		// divide up and create the chunks to send out
+		// TODO divide up and create the chunks to send out
 	}
 }

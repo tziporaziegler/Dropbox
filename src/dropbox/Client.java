@@ -86,21 +86,19 @@ public class Client extends JFrame implements ReaderListener {
 		listPlace = 0;
 	}
 
-	// add the filenames from the FILE messages until reach expected amount of
-	// files according to the FILES message
+	// add the filenames from the FILE messages until reach expected amount of files according to the FILES message
 	public void addFile(String filename) {
 		filenames[listPlace] = filename;
 		if (listPlace == filenames.length - 1) {
-			// once the correct amount of filenames are received, add the list
-			// to the jFrame
+			// once the correct amount of filenames are received, add the list to the jFrame
 			list.setListData(filenames);
-		} else {
+		}
+		else {
 			listPlace++;
 		}
 	}
 
-	// Whenever a new line is read in, determine what the Message is by
-	// comparing it to all the valid Message Patterns
+	// Whenever a new line is read in, determine what the Message is by comparing it to all the valid Message Patterns
 	@Override
 	public void onLineRead(String line, Socket socket) {
 		for (Message msg : validMsgs) {
@@ -122,7 +120,8 @@ public class Client extends JFrame implements ReaderListener {
 		public void actionPerformed(ActionEvent event) {
 			try {
 				send("LIST");
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -164,15 +163,14 @@ public class Client extends JFrame implements ReaderListener {
 					// CHUnK [filename] [last modified] [filesize] [offset]
 					// [base64 encoded bytes]
 					// sends chunk message to be handled by server
-					send("CHUNK " + file.getName() + " " + file.lastModified()
-							+ " " + file.length() + " " + offset + " "
-							+ base64.toString());
+					send("CHUNK " + file.getName() + " " + file.lastModified() + " " + file.length() + " " + offset + " " + base64.toString());
 
 					// System.out.println("CHUNK " + file.getName() + " "
 					// + file.lastModified() + " " + file.length() + " "
 					// + offset + " " + base64.toString());
 				}
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -181,7 +179,8 @@ public class Client extends JFrame implements ReaderListener {
 	public static void main(String[] args) {
 		try {
 			new Client();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

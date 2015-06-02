@@ -3,14 +3,14 @@ package dropbox;
 import java.io.File;
 
 public class FileCache {
-	//FIXME won't automatically generate file on mac since need authentication
-	//private static final String ROOT = "/dropbox/";
+	// private static final String ROOT = "/dropbox/";
 	private String root;
 
 	public FileCache(String root) {
 		this.root = root;
 		// create dropbox directory
 		// will only create the directory if it doesn't exist
+		// FIXME won't automatically generate file on mac since need authentication
 		new File(root).mkdir();
 	}
 
@@ -22,7 +22,7 @@ public class FileCache {
 	public void addChunk(Chunk chunk) {
 
 	}
- 
+
 	public Chunk getChunk(String username, String filename, int start, int length) {
 		return new Chunk(username, filename, start, length);
 	}
@@ -41,18 +41,18 @@ public class FileCache {
 
 		return listOfFileNames;
 	}
-	
-	public String getRoot(){
+
+	public String getRoot() {
 		return root;
 	}
-	
-	public File getFile(String fileName){
+
+	public File getFile(String fileName) {
 		File[] files = getFiles();
-		for(File x:files){
-			if(x.getName().equals(fileName)){
+		for (File x : files) {
+			if (x.getName().equals(fileName)) {
 				return x;
 			}
 		}
-		return null;	
+		return null;
 	}
 }

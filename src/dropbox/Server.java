@@ -41,6 +41,7 @@ public class Server implements ReaderListener {
 		IOUtils.closeQuietly(socket);
 	}
 
+	// Whenever a new line is read in, determine what the Message is by comparing it to all the valid Message Patterns
 	@Override
 	public void onLineRead(String line, Socket socket) {
 		for (Message msg : validMsgs) {
@@ -50,7 +51,6 @@ public class Server implements ReaderListener {
 			}
 		}
 	}
-
 
 	public static void main(String[] args) {
 		try {

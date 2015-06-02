@@ -7,22 +7,22 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class WriterThread extends Thread{
+public class WriterThread extends Thread {
 	private LinkedBlockingQueue<Message> msgQueue;
 	private ArrayList<Socket> sockets;
 	private Message currentMsg;
-	
+
 	public WriterThread(LinkedBlockingQueue<Message> msgQueue, ArrayList<Socket> sockets) {
 		this.msgQueue = msgQueue;
 		this.sockets = sockets;
 	}
-	
+
 	@Override
-	public void run(){
-		while(true){
+	public void run() {
+		while (true) {
 			try {
 				currentMsg = msgQueue.take();
-				for(Socket socket: sockets){
+				for (Socket socket : sockets) {
 					OutputStream out = socket.getOutputStream();
 					ObjectOutputStream objOut = new ObjectOutputStream(out);
 					objOut.writeObject(currentMsg);
