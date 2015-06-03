@@ -7,11 +7,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileMessage extends Message {
-	private Client client;
-
+	
 	// 0FILE 1[filename] 2[last modified] 3[filesize]
 	private final static Pattern PATTERN = Pattern.compile("FILE\\s\\w+\\s(\\d+\\s){2}");
-
+	private Client client;
+	
 	public FileMessage(Client client) {
 		this.client = client;
 	}

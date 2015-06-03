@@ -5,11 +5,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FilesMessage extends Message {
-	private Client client;
 
 	// FILES [number of files]
 	private final static Pattern PATTERN = Pattern.compile("FILES\\s\\d+");
-
+	private Client client;
+	
 	public FilesMessage(Client client) {
 		this.client = client;
 	}

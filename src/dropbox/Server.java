@@ -4,60 +4,27 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.commons.io.IOUtils;
-
-public class Server implements ReaderListener {
+public class Server extends World {
 	private ServerSocket serverSocket;
-	private Socket socket;
 	private ArrayList<Socket> sockets;
 	private LinkedBlockingQueue<Message> msgQueue;
-	private FileCache cache = new FileCache("/dropbox_server/");
-	private List<Message> validMsgs;
 
 	public Server() throws IOException {
+		super("/dropbox_server/");
 		serverSocket = new ServerSocket(6003);
 		sockets = new ArrayList<Socket>();
 
 		msgQueue = new LinkedBlockingQueue<Message>();
 		new WriterThread(msgQueue, sockets).start();
 
-		validMsgs = new ArrayList<Message>();
-		validMsgs.add(new ChunkClient());
-		validMsgs.add(new DownloadMessage());
-		validMsgs.add(new ListMessage());
+		populateValidMsgs(new ChunkClient(this), new DownloadMessage(), new ListMessage());
 
 		while (true) {
 			socket = serverSocket.accept();
 			new ReaderThread(socket, this).start();
 			sockets.add(socket);
-		}
-	}
-
-	@Override
-	public void onCloseSocket(Socket socket) {
-		IOUtils.closeQuietly(socket);
-	}
-
-	// Whenever a new line is read in, determine what the Message is by comparing it to all the valid Message Patterns
-	@Override
-	public void onLineRead(String line, Socket socket) {
-		for (Message msg : validMsgs) {
-			if (msg.matches(line)) {
-				msg.perform(cache, socket, line);
-				break;
-			}
-		}
-	}
-
-	public static void main(String[] args) {
-		try {
-			new Server();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 }
