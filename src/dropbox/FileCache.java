@@ -1,6 +1,7 @@
 package dropbox;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 
 public class FileCache {
@@ -20,17 +21,25 @@ public class FileCache {
 		return folder.listFiles();
 	}
 
-	public void addChunk(Chunk chunk) {
+	/*public void addChunk(Chunk chunk) {
 
 	}
 
 	public Chunk getChunk(String username, String filename, int start, int length) {
 		return new Chunk(username, filename, start, length);
-	}
+	}*/
 
 	public ArrayList<String> getFileNames() {
 		File folder = new File(root);
-		File[] listOfFiles = folder.listFiles();
+
+		// get list of all files in root directory, excluding hidden and system files
+		File[] listOfFiles = folder.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File file) {
+				return !file.isHidden();
+			}
+		});
+
 		ArrayList<String> listOfFileNames = new ArrayList<String>();
 
 		for (int i = 0; i < listOfFiles.length; i++) {

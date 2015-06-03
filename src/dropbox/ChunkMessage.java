@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public abstract class ChunkMessage extends Message {
 	
 	// CHUNK [filename] [last modified] [filesize] [offset] [base64 encoded bytes]
-	protected final static Pattern PATTERN = Pattern.compile("CHUNK\\s\\w+\\s(\\d+\\s){3}[A-Za-z0-9=-]");
+	protected final static Pattern PATTERN = Pattern.compile("CHUNK\\s\\w+.\\w+\\s(\\d+\\s){3}\\[B@[A-Za-z0-9]+");
 	protected World world;
 
 	public ChunkMessage(World world) {

@@ -1,7 +1,7 @@
 package dropbox;
 
 public class Chunk {
-	private String filename;
+	/*private String filename;
 	private byte bytes[];
 	private int start;
 
@@ -9,6 +9,5 @@ public class Chunk {
 		filename = "dropbox/" + username + "/" + nameOfFile;
 		this.start = start;
 		bytes = new byte[length];
-	}
-
+	}*/
 }

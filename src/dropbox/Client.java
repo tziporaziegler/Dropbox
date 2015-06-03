@@ -4,11 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -20,8 +17,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
-
-import org.apache.commons.codec.binary.Base64;
 
 public class Client extends World {
 	private JFrame frame;
@@ -59,6 +54,8 @@ public class Client extends World {
 		frame.setVisible(true);
 
 		send("LIST");
+		System.out.println("Client sending LIST");
+		
 		checkUpload();
 	}
 
@@ -68,7 +65,7 @@ public class Client extends World {
 		if (filenames == null) {
 			for (String clientFile : clientFiles) {
 				File file = cache.getFile(clientFile);
-				sendChunkMsg(file);
+				sendChunkMsg(file, socket);
 			}
 		}
 		else {
@@ -78,17 +75,10 @@ public class Client extends World {
 					// get the actual file that need from the file cache
 					File file = cache.getFile(clientFile);
 					// upload clientFile
-					sendChunkMsg(file);
+					sendChunkMsg(file, socket);
 				}
 			}
 		}
-	}
-
-	private void send(String msg) throws IOException {
-		OutputStream out = socket.getOutputStream();
-		PrintWriter writer = new PrintWriter(out);
-		writer.println(msg);
-		writer.flush();
 	}
 
 	// FILES message creates new array to hold all FILE messages that will follow
@@ -121,7 +111,7 @@ public class Client extends World {
 					file = chooser.getSelectedFile();
 				}
 				// FIXME break up file into chunks < 512
-				sendChunkMsg(file);
+				sendChunkMsg(file, socket);
 			}
 			catch (IOException e) {
 				e.printStackTrace();
@@ -129,36 +119,4 @@ public class Client extends World {
 		}
 
 	};
-
-	public void sendChunkMsg(File file) throws FileNotFoundException, IOException {
-		int offset = 0;
-		long size = file.length();
-		long leftToRead = size;
-
-		while (offset < size) {
-			// read file in byte
-			FileInputStream fin = new FileInputStream(file);
-
-			// reads file into array until offset
-
-			int chunkSize = leftToRead - 512 > 0 ? 512 : (int) leftToRead;
-			byte fileContent[] = new byte[chunkSize + 1];
-			fin.read(fileContent, offset, chunkSize);
-
-			// encode bytes to base 64
-			byte[] base64 = Base64.encodeBase64(fileContent);
-
-			// CHUNK [filename] [last modified] [filesize] [offset] [base64 encoded bytes]
-			// send chunk message to be handled by server
-			send("CHUNK " + file.getName() + " " + file.lastModified() + " " + size + " " + offset + " " + base64.toString());
-
-			// add 512 to offset for next chunk
-			offset += 512;
-
-			fin.close();
-
-			// TODO remove println
-			System.out.println("CHUNK " + file.getName() + " " + file.lastModified() + " " + size + " " + offset + " " + base64.toString());
-		}
-	}
 }

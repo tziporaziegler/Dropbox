@@ -1,6 +1,7 @@
 package dropbox;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.regex.Matcher;
@@ -22,18 +23,27 @@ public class ListMessage extends Message {
 		try {
 			File folder = new File(cache.getRoot());
 
-			// get list of all files in root directory
-			File[] listOfFiles = folder.listFiles();
+			// get list of all files in root directory, excluding hidden and system files
+			File[] listOfFiles = folder.listFiles(new FileFilter() {
+				@Override
+				public boolean accept(File file) {
+					return !file.isHidden();
+				}
+			});
 
 			// check if directory is empty
 			if (listOfFiles != null) {
 				// send message with the number of files
-				send("FILES " + listOfFiles.length, socket);
+				String filesMsg = "FILES " + listOfFiles.length;
+				send(filesMsg, socket);
+				System.out.println("List sending " + filesMsg);
 
 				// for each file message with the data
 				for (File file : listOfFiles) {
 					if (file.isFile()) {
-						send("FILE " + file.getName() + " " + file.lastModified() + " " + file.length() + " ", socket);
+						String fileMsg = "FILE " + file.getName() + " " + file.lastModified() + " " + file.length();
+						send(fileMsg, socket);
+						System.out.println("List sending " + fileMsg);
 					}
 				}
 			}

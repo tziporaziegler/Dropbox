@@ -19,7 +19,7 @@ public class Server extends World {
 		msgQueue = new LinkedBlockingQueue<Message>();
 		new WriterThread(msgQueue, sockets).start();
 
-		populateValidMsgs(new ChunkClient(this), new DownloadMessage(), new ListMessage());
+		populateValidMsgs(new ChunkClient(this), new DownloadMessage(this), new ListMessage());
 
 		while (true) {
 			socket = serverSocket.accept();

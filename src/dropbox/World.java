@@ -3,6 +3,8 @@ package dropbox;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ public class World implements ReaderListener {
 	}
 
 	public void newFile(String filename, long lastModified) throws FileNotFoundException {
-		File currentFile = new File(root + filename + ".txt");
+		File currentFile = new File(root + filename);
 		currentFile.setLastModified(lastModified);
 		currentRAFile = new RandomAccessFile(currentFile, "rw");
 	}
@@ -48,9 +50,47 @@ public class World implements ReaderListener {
 		currentOffsetTotal += 512;
 
 		if (filesize - currentOffsetTotal < 512) {
-			currentRAFile.close();
 			currentOffsetTotal = 0;
 		}
+	}
+
+	public void sendChunkMsg(File file, Socket socket) throws FileNotFoundException, IOException {
+		RandomAccessFile randomFile = new RandomAccessFile(file, "r");
+
+		int offset = 0;
+		long size = file.length();
+		long leftToRead = size;
+
+		while (offset < size) {
+			// reads file into array until offset
+			int chunkSize = leftToRead - 512 > 0 ? 512 : (int) leftToRead;
+
+			randomFile.seek(offset);
+			byte fileContent[] = new byte[chunkSize];
+			randomFile.read(fileContent, 0, chunkSize);
+
+			// encode bytes to base 64
+			byte[] base64 = Base64.encodeBase64(fileContent);
+
+			// CHUNK [filename] [last modified] [filesize] [offset] [base64 encoded bytes]
+			// send chunk message to be handled by server
+			String msg = "CHUNK " + file.getName() + " " + file.lastModified() + " " + size + " " + offset + " " + base64.toString();
+			send(msg);
+			System.out.println("sending " + msg);
+
+			// add 512 to offset for next chunk
+			offset += 512;
+			leftToRead -= 512;
+		}
+
+		randomFile.close();
+	}
+
+	protected void send(String msg) throws IOException {
+		OutputStream out = socket.getOutputStream();
+		PrintWriter writer = new PrintWriter(out);
+		writer.println(msg);
+		writer.flush();
 	}
 
 	// Whenever a new line is read in, determine what the Message is by comparing it to all the valid Message Patterns

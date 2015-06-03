@@ -7,11 +7,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileMessage extends Message {
-	
+
 	// 0FILE 1[filename] 2[last modified] 3[filesize]
-	private final static Pattern PATTERN = Pattern.compile("FILE\\s\\w+\\s(\\d+\\s){2}");
+	private final static Pattern PATTERN = Pattern.compile("FILE\\s\\w+.\\w+(\\s\\d+){2}");
 	private Client client;
-	
+
 	public FileMessage(Client client) {
 		this.client = client;
 	}
@@ -45,20 +45,24 @@ public class FileMessage extends Message {
 		try {
 			for (File clientFile : listOfFiles) {
 				// see if this file exists in the clients directory
-				if (clientFile.getName().equals(fileName)) {
+				if ((clientFile.getName()).compareTo(fileName) == 0) {
 					// file is found so now compare when last modified from files in server's cache
 					found = true;
 					if (clientFile.lastModified() < lastModified) {
 						// now need to send download msg to server
 						// DOWNLOAD [filename]
-						send("DOWNLOAD " + fileName, socket);
+						String msg = "DOWNLOAD " + fileName;
+						send(msg, socket);
+						System.out.println("File sending " + msg + " (lastModified not up to date)");
 					}
 					break;
 				}
 			}
 			// file is not on clients dir so send download msg
 			if (!found) {
-				send("DOWNLOAD " + fileName, socket);
+				String msg = "DOWNLOAD " + fileName;
+				send(msg, socket);
+				System.out.println("File sending " + msg + " (file never existed)");
 			}
 		}
 		catch (IOException e) {
