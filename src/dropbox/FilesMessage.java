@@ -5,7 +5,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FilesMessage extends Message {
-	private String msg;
 	private Client client;
 
 	// FILES [number of files]
@@ -17,13 +16,12 @@ public class FilesMessage extends Message {
 
 	@Override
 	public boolean matches(String msg) {
-		this.msg = msg;
 		Matcher matcher = PATTERN.matcher(msg);
 		return matcher.matches();
 	}
 
 	@Override
-	public void perform(FileCache cache, Socket socket) {
+	public void perform(FileCache cache, Socket socket, String msg) {
 		String[] splitMsg = msg.split(" ");
 		client.createArray(Integer.valueOf(splitMsg[1]));
 	}

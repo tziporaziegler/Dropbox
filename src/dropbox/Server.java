@@ -46,7 +46,7 @@ public class Server implements ReaderListener {
 	public void onLineRead(String line, Socket socket) {
 		for (Message msg : validMsgs) {
 			if (msg.matches(line)) {
-				msg.perform(cache, socket);
+				msg.perform(cache, socket, line);
 				break;
 			}
 		}

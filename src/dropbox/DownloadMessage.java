@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 public class DownloadMessage extends Message {
 
-	// DOWNLOAD [filename] [offset] [chunk size]
-	private final static Pattern PATTERN = Pattern.compile("DOWNLOAD\\s\\w+\\s\\d+" + Message.LONG_PATTERN);
+	// DOWNLOAD [filename]
+	private final static Pattern PATTERN = Pattern.compile("DOWNLOAD\\s\\w+");
 
 	@Override
 	public boolean matches(String msg) {
@@ -16,7 +16,7 @@ public class DownloadMessage extends Message {
 	}
 
 	@Override
-	public void perform(FileCache cache, Socket socket) {
+	public void perform(FileCache cache, Socket socket, String msg) {
 		// TODO divide up and create the chunks to send out
 	}
 }

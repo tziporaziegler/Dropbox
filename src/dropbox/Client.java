@@ -5,12 +5,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.BoxLayout;
@@ -31,7 +33,6 @@ public class Client extends JFrame implements ReaderListener {
 
 	private String[] filenames;
 	private JList<String> list;
-	private JButton listButton;
 	private JButton uploadButton;
 	private int listPlace;
 
@@ -44,10 +45,6 @@ public class Client extends JFrame implements ReaderListener {
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, 1));
-
-		listButton = new JButton("LIST");
-		listButton.addActionListener(listClick);
-		panel.add(listButton);
 		add(panel, BorderLayout.NORTH);
 
 		uploadButton = new JButton("UPLOAD");
@@ -70,6 +67,23 @@ public class Client extends JFrame implements ReaderListener {
 		validMsgs.add(new SyncMessage());
 
 		setVisible(true);
+
+		send("LIST");
+		checkUpload();
+	}
+
+	private void checkUpload() throws FileNotFoundException, IOException {
+		ArrayList<String> clientFiles = cache.getFileNames();
+		ArrayList<String> filenamesList = new ArrayList<String>(Arrays.asList(filenames));
+		for (String clientFile : clientFiles) {
+			if (!filenamesList.contains(clientFile)) {
+				//get the actual file that need from the file cache
+				File file = cache.getFile(clientFile);
+				// upload clientFile
+				// TODO send("CHUNK...")
+					sendChunkMsg(file);
+			}
+		}
 	}
 
 	private void send(String msg) throws IOException {
@@ -103,7 +117,7 @@ public class Client extends JFrame implements ReaderListener {
 	public void onLineRead(String line, Socket socket) {
 		for (Message msg : validMsgs) {
 			if (msg.matches(line)) {
-				msg.perform(cache, socket);
+				msg.perform(cache, socket, line);
 				break;
 			}
 		}
@@ -113,19 +127,6 @@ public class Client extends JFrame implements ReaderListener {
 	public void onCloseSocket(Socket socket) {
 		IOUtils.closeQuietly(socket);
 	}
-
-	// send a LIST message to the Server whenever the listButton is clicked
-	ActionListener listClick = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			try {
-				send("LIST");
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	};
 
 	ActionListener uploadClick = new ActionListener() {
 		@Override
@@ -139,42 +140,45 @@ public class Client extends JFrame implements ReaderListener {
 					file = chooser.getSelectedFile();
 				}
 
-				int offset = 0;
-
-				// send chunks of the file
-				while (offset < file.length()) {
-
-					byte fileContent[] = new byte[512];
-
-					// read file in byte form and encode to base 64
-					FileInputStream fin = new FileInputStream(file);
-					int counter = 0;
-
-					// reads file into array
-					// until offset
-					fin.read(fileContent, offset, 512);
-
-					// encode bytes to base 64
-					byte[] base64 = Base64.encodeBase64(fileContent);
-
-					// add 512 to offset for next chunk
-					offset += 512;
-
-					// CHUnK [filename] [last modified] [filesize] [offset]
-					// [base64 encoded bytes]
-					// sends chunk message to be handled by server
-					send("CHUNK " + file.getName() + " " + file.lastModified() + " " + file.length() + " " + offset + " " + base64.toString());
-
-					// System.out.println("CHUNK " + file.getName() + " "
-					// + file.lastModified() + " " + file.length() + " "
-					// + offset + " " + base64.toString());
-				}
+				sendChunkMsg(file);
 			}
 			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+	
 	};
+	
+	public void sendChunkMsg(File file) throws FileNotFoundException, IOException {
+		int offset = 0;
+
+		// send chunks of the file
+		while (offset < file.length()) {
+
+			byte fileContent[] = new byte[512];
+
+			// read file in byte form and encode to base 64
+			FileInputStream fin = new FileInputStream(file);
+
+			// reads file into array
+			// until offset
+			fin.read(fileContent, offset, 512);
+
+			// encode bytes to base 64
+			byte[] base64 = Base64.encodeBase64(fileContent);
+
+			// add 512 to offset for next chunk
+			offset += 512;
+
+			// CHUnK [filename] [last modified] [filesize] [offset]
+			// [base64 encoded bytes]
+			// sends chunk message to be handled by server
+			send("CHUNK " + file.getName() + " " + file.lastModified() + " " + file.length() + " " + offset + " " + base64.toString());
+
+			//System.out.println("CHUNK " + file.getName() + " " + file.lastModified() + " " + file.length() + " " + offset + " "
+					//+ base64.toString());
+		}
+	}
 
 	public static void main(String[] args) {
 		try {

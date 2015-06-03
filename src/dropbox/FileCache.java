@@ -1,6 +1,7 @@
 package dropbox;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class FileCache {
 	// private static final String ROOT = "/dropbox/";
@@ -27,15 +28,15 @@ public class FileCache {
 		return new Chunk(username, filename, start, length);
 	}
 
-	public String[] getFileNames() {
+	public ArrayList<String> getFileNames() {
 		File folder = new File(root);
 		File[] listOfFiles = folder.listFiles();
-		String[] listOfFileNames = new String[listOfFiles.length];
+		ArrayList<String> listOfFileNames = new ArrayList<String>();
 
 		for (int i = 0; i < listOfFiles.length; i++) {
 			File file = listOfFiles[i];
 			if (file.isFile()) {
-				listOfFileNames[i] = file.getName();
+				listOfFileNames.add(file.getName());
 			}
 		}
 

@@ -8,7 +8,7 @@ import java.net.Socket;
 public abstract class Message {
 	public final static String LONG_PATTERN = "^-?\\d{1,19}$";
 	
-	abstract void perform(FileCache cache, Socket socket);
+	abstract void perform(FileCache cache, Socket socket, String msg);
 
 	abstract boolean matches(String msg);
 

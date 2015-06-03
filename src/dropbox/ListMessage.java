@@ -18,7 +18,7 @@ public class ListMessage extends Message {
 	}
 
 	@Override
-	public void perform(FileCache cache, Socket socket) {
+	public void perform(FileCache cache, Socket socket, String msg) {
 		try {
 			File folder = new File(cache.getRoot());
 
