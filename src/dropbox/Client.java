@@ -117,7 +117,6 @@ public class Client extends World {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					file = chooser.getSelectedFile();
 				}
-				// FIXME break up file into chunks < 512
 				sendChunkMsg(file, socket);
 			}
 			catch (IOException e) {
