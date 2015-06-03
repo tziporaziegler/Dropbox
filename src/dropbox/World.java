@@ -77,7 +77,7 @@ public class World implements ReaderListener {
 			// CHUNK [filename] [last modified] [filesize] [offset] [base64 encoded bytes]
 			String msg = "CHUNK " + file.getName() + " " + file.lastModified() + " " + size + " " + offset + " " + string64;
 			send(msg);
-			System.out.println("sending " + msg);
+			System.out.println(this + " sending " + msg);
 
 			// add 512 to offset for next chunk
 			offset += 512;
