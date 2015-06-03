@@ -61,7 +61,7 @@ public class Client extends JFrame implements ReaderListener {
 		// used when determining what kind of message was read in by checking if
 		// matches any of the Patterns
 		validMsgs = new ArrayList<Message>();
-		validMsgs.add(new ChunkServer());
+		validMsgs.add(new ChunkServer(this));
 		validMsgs.add(new FileMessage(this));
 		validMsgs.add(new FilesMessage(this));
 		validMsgs.add(new SyncMessage());
@@ -77,11 +77,10 @@ public class Client extends JFrame implements ReaderListener {
 		ArrayList<String> filenamesList = new ArrayList<String>(Arrays.asList(filenames));
 		for (String clientFile : clientFiles) {
 			if (!filenamesList.contains(clientFile)) {
-				//get the actual file that need from the file cache
+				// get the actual file that need from the file cache
 				File file = cache.getFile(clientFile);
 				// upload clientFile
-				// TODO send("CHUNK...")
-					sendChunkMsg(file);
+				sendChunkMsg(file);
 			}
 		}
 	}
@@ -146,38 +145,42 @@ public class Client extends JFrame implements ReaderListener {
 				e.printStackTrace();
 			}
 		}
-	
+
 	};
-	
+
 	public void sendChunkMsg(File file) throws FileNotFoundException, IOException {
 		int offset = 0;
 
 		// send chunks of the file
-		while (offset < file.length()) {
+		// TODO what if there is less than 512 bytes left in the file
+		long size = file.length();
 
+		// read file in byte form and encode to base 64
+		FileInputStream fin = new FileInputStream(file);
+
+		while (offset < size) {
 			byte fileContent[] = new byte[512];
 
-			// read file in byte form and encode to base 64
-			FileInputStream fin = new FileInputStream(file);
-
-			// reads file into array
-			// until offset
+			// reads file into array until offset
 			fin.read(fileContent, offset, 512);
 
 			// encode bytes to base 64
 			byte[] base64 = Base64.encodeBase64(fileContent);
 
+			// CHUNK [filename] [last modified] [filesize] [offset] [base64 encoded bytes]
+			// send chunk message to be handled by server
+			send("CHUNK " + file.getName() + " " + file.lastModified() + " " + size + " " + offset + " " + base64.toString());
+
 			// add 512 to offset for next chunk
 			offset += 512;
 
-			// CHUnK [filename] [last modified] [filesize] [offset]
-			// [base64 encoded bytes]
-			// sends chunk message to be handled by server
-			send("CHUNK " + file.getName() + " " + file.lastModified() + " " + file.length() + " " + offset + " " + base64.toString());
+			fin.reset();
 
-			//System.out.println("CHUNK " + file.getName() + " " + file.lastModified() + " " + file.length() + " " + offset + " "
-					//+ base64.toString());
+			// TODO remove println
+			System.out.println("CHUNK " + file.getName() + " " + file.lastModified() + " " + size + " " + offset + " " + base64.toString());
 		}
+
+		fin.close();
 	}
 
 	public static void main(String[] args) {
