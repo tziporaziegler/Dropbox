@@ -53,9 +53,11 @@ public class Client extends World {
 
 		frame.setVisible(true);
 
+		// retrieve list of files on server and automtiacally download any missing files or files that are not up to date
 		send("LIST");
 		System.out.println("Client sending LIST");
-		
+
+		// check if have any files that server doesn't or any newer file versions than server. If yes, upload files to server.
 		checkUpload();
 	}
 
@@ -76,6 +78,11 @@ public class Client extends World {
 					File file = cache.getFile(clientFile);
 					// upload clientFile
 					sendChunkMsg(file, socket);
+				}
+				else {
+					// FIXME get both files
+					// check if client modified date is newer
+					// if yes, upload - sendChunkMsg(file, socket);
 				}
 			}
 		}
