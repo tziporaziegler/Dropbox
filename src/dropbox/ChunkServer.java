@@ -1,5 +1,7 @@
 package dropbox;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.Socket;
 
 public class ChunkServer extends ChunkMessage {
@@ -15,13 +17,24 @@ public class ChunkServer extends ChunkMessage {
 
 		// send data to client
 		// use random access to save bytes to the file starting at the chunk offset location
-		// CHUNK [filename] [last modified] [filesize] [offset] [base64 encoded bytes]
+		// 0CHUNK 1[filename] 2[last modified] 3[filesize] 4[offset] 5[base64 encoded bytes]
 
-		int offset = Integer.valueOf(splitMsg[4]);
+		long offset = Long.valueOf(splitMsg[4]);
+		
 		if (offset == 0) {
-			client.newFile(splitMsg[1], splitMsg[2]);
+			try {
+				client.newFile(splitMsg[1], Long.valueOf(splitMsg[2]));
+			}
+			catch (NumberFormatException | FileNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 
-		client.addBytes();
+		try {
+			client.addBytes(offset, Long.valueOf(splitMsg[3]), splitMsg[5]);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

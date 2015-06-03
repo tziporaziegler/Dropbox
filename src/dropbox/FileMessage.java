@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class FileMessage extends Message {
 	private Client client;
 
-	// FILE [filename] [last modified] [filesize]
+	// 0FILE 1[filename] 2[last modified] 3[filesize]
 	private final static Pattern PATTERN = Pattern.compile("FILE\\s\\w+\\s(\\d+\\s){2}");
 
 	public FileMessage(Client client) {
@@ -24,7 +24,7 @@ public class FileMessage extends Message {
 
 	@Override
 	public void perform(FileCache cache, Socket socket, String msg) {
-		String [] splitMsg = msg.split(" ");
+		String[] splitMsg = msg.split(" ");
 
 		// add the filename to Client's list of files
 		client.addFile(splitMsg[1]);
@@ -33,8 +33,8 @@ public class FileMessage extends Message {
 	}
 
 	private void downloadMissing(FileCache cache, Socket socket, String[] splitMsg) {
-		String fileName = splitMsg[0];
-		long lastModified = Long.valueOf(splitMsg[1]);
+		String fileName = splitMsg[1];
+		long lastModified = Long.valueOf(splitMsg[2]);
 
 		// get list of all files in client root directory and
 		File folder = new File(cache.getRoot());

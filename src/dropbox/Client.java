@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -28,13 +29,18 @@ import org.apache.commons.io.IOUtils;
 public class Client extends JFrame implements ReaderListener {
 	private static final long serialVersionUID = 1L;
 	private Socket socket;
-	private FileCache cache = new FileCache("/dropbox/");
+	private String root = "/dropbox/";
+	private FileCache cache = new FileCache(root);
 	private List<Message> validMsgs;
 
 	private String[] filenames;
 	private JList<String> list;
 	private JButton uploadButton;
 	private int listPlace;
+
+	// store file in middle of writing to
+	private RandomAccessFile currentRAFile;
+	private int currentOffsetTotal;
 
 	public Client() throws UnknownHostException, IOException {
 		setTitle("Dropbox");
@@ -74,13 +80,22 @@ public class Client extends JFrame implements ReaderListener {
 
 	private void checkUpload() throws FileNotFoundException, IOException {
 		ArrayList<String> clientFiles = cache.getFileNames();
-		ArrayList<String> filenamesList = new ArrayList<String>(Arrays.asList(filenames));
-		for (String clientFile : clientFiles) {
-			if (!filenamesList.contains(clientFile)) {
-				// get the actual file that need from the file cache
+
+		if (filenames == null) {
+			for (String clientFile : clientFiles) {
 				File file = cache.getFile(clientFile);
-				// upload clientFile
 				sendChunkMsg(file);
+			}
+		}
+		else {
+			ArrayList<String> filenamesList = new ArrayList<String>(Arrays.asList(filenames));
+			for (String clientFile : clientFiles) {
+				if (!filenamesList.contains(clientFile)) {
+					// get the actual file that need from the file cache
+					File file = cache.getFile(clientFile);
+					// upload clientFile
+					sendChunkMsg(file);
+				}
 			}
 		}
 	}
@@ -150,19 +165,18 @@ public class Client extends JFrame implements ReaderListener {
 
 	public void sendChunkMsg(File file) throws FileNotFoundException, IOException {
 		int offset = 0;
-
-		// send chunks of the file
-		// TODO what if there is less than 512 bytes left in the file
 		long size = file.length();
-
-		// read file in byte form and encode to base 64
-		FileInputStream fin = new FileInputStream(file);
+		long leftToRead = size;
 
 		while (offset < size) {
-			byte fileContent[] = new byte[512];
+			// read file in byte
+			FileInputStream fin = new FileInputStream(file);
 
 			// reads file into array until offset
-			fin.read(fileContent, offset, 512);
+
+			int chunkSize = leftToRead - 512 > 0 ? 512 : (int) leftToRead;
+			byte fileContent[] = new byte[chunkSize];
+			fin.read(fileContent, offset, chunkSize - 1);
 
 			// encode bytes to base 64
 			byte[] base64 = Base64.encodeBase64(fileContent);
@@ -174,22 +188,37 @@ public class Client extends JFrame implements ReaderListener {
 			// add 512 to offset for next chunk
 			offset += 512;
 
-			fin.reset();
+			fin.close();
 
 			// TODO remove println
 			System.out.println("CHUNK " + file.getName() + " " + file.lastModified() + " " + size + " " + offset + " " + base64.toString());
 		}
-
-		fin.close();
 	}
 
-	public static void main(String[] args) {
-		try {
-			new Client();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
+	public void newFile(String filename, long lastModified) throws FileNotFoundException {
+		File currentFile = new File(root + filename + ".txt");
+		currentFile.setLastModified(lastModified);
+		currentRAFile = new RandomAccessFile(currentFile, "rw");
+	}
+
+	public void addBytes(long offset, long filesize, String encodedBytes) throws IOException {
+		currentRAFile.seek(offset);
+		currentRAFile.write(Base64.decodeBase64(encodedBytes));
+
+		currentOffsetTotal += 512;
+
+		if (filesize - currentOffsetTotal < 512) {
+			currentRAFile.close();
+			currentOffsetTotal = 0;
 		}
 	}
 
+	/* public static void main(String[] args) {
+	 * try {
+	 * new Client();
+	 * }
+	 * catch (IOException e) {
+	 * e.printStackTrace();
+	 * }
+	 * } */
 }

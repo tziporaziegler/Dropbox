@@ -35,16 +35,13 @@ public class DownloadMessage extends Message {
 
 	public void sendChunkMsg(File file, Socket socket) throws FileNotFoundException, IOException {
 		int offset = 0;
-
-		// send chunks of the file
-		// TODO what if there is less than 512 bytes left in the file
 		long size = file.length();
-
-		// read file in byte form and encode to base 64
-		FileInputStream fin = new FileInputStream(file);
 
 		while (offset < size) {
 			byte fileContent[] = new byte[512];
+
+			// read file in byte form
+			FileInputStream fin = new FileInputStream(file);
 
 			// reads file into array until offset
 			fin.read(fileContent, offset, 512);
@@ -59,9 +56,7 @@ public class DownloadMessage extends Message {
 			// add 512 to offset for next chunk
 			offset += 512;
 
-			fin.reset();
+			fin.close();
 		}
-
-		fin.close();
 	}
 }
