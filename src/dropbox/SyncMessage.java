@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class SyncMessage extends Message {
 	// SYNC [filename] [last modified] [filesize]
-	private final static Pattern PATTERN = Pattern.compile("SYNC\\s\\w+.\\w+(\\s\\d+){2}");
+	private final static Pattern PATTERN = Pattern.compile("SYNC\\s\\w+\\.\\w+(\\s\\d+){2}");
 
 	@Override
 	public boolean matches(String msg) {

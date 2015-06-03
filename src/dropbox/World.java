@@ -71,10 +71,11 @@ public class World implements ReaderListener {
 
 			// encode bytes to base 64
 			byte[] base64 = Base64.encodeBase64(fileContent);
+			// convert the array of base64 bytes to a String
+			String string64 = new String(base64);
 
 			// CHUNK [filename] [last modified] [filesize] [offset] [base64 encoded bytes]
-			// send chunk message to be handled by server
-			String msg = "CHUNK " + file.getName() + " " + file.lastModified() + " " + size + " " + offset + " " + base64.toString();
+			String msg = "CHUNK " + file.getName() + " " + file.lastModified() + " " + size + " " + offset + " " + string64;
 			send(msg);
 			System.out.println("sending " + msg);
 
