@@ -53,9 +53,11 @@ public class Client extends World {
 
 		frame.setVisible(true);
 
+		// retrieve list of files on server and automtiacally download any missing files or files that are not up to date
 		send("LIST");
 		System.out.println("Client sending LIST");
-		
+
+		// check if have any files that server doesn't or any newer file versions than server. If yes, upload files to server.
 		checkUpload();
 	}
 
@@ -77,6 +79,7 @@ public class Client extends World {
 					// upload clientFile
 					sendChunkMsg(file, socket);
 				}
+
 				else if (filenamesList.contains(clientFile)){
 					long clientLastModified = (cache.getFile(clientFile)).lastModified();
 					for(int i = 0; i < filenames.length; i++){
@@ -91,6 +94,7 @@ public class Client extends World {
 							}
 						}
 					}
+
 				}
 			}
 		}
@@ -127,7 +131,6 @@ public class Client extends World {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					file = chooser.getSelectedFile();
 				}
-				// FIXME break up file into chunks < 512
 				sendChunkMsg(file, socket);
 			}
 			catch (IOException e) {

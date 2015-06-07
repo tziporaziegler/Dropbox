@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class DownloadMessage extends Message {
 
 	// DOWNLOAD [filename]
-	private final static Pattern PATTERN = Pattern.compile("DOWNLOAD\\s\\w+.\\w+");
+	private final static Pattern PATTERN = Pattern.compile("DOWNLOAD\\s\\w+\\.\\w+");
 	private World world;
 
 	public DownloadMessage(Server server) {

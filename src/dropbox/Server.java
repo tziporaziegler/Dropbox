@@ -28,5 +28,8 @@ public class Server extends World {
 		}
 	}
 	
+	public ArrayList<Socket> getSockets(){
+		return sockets;
+	}
 
 }
