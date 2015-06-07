@@ -17,7 +17,7 @@ public class ChunkClient extends ChunkMessage {
 	public void perform(FileCache cache, Socket socket, String msg) {
 		String[] splitMsg = msg.split(" ");
 		createFile(splitMsg);
-		//send SYNC message to all sockets in arrat
+		// send SYNC message to all sockets in arrat
 		for (Socket currentSock : sockets) {
 			if (currentSock != socket) {
 				try {

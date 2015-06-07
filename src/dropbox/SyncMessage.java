@@ -10,20 +10,17 @@ public class SyncMessage extends Message {
 	// SYNC 1[filename] 2[last modified] 3[filesize]
 	private final static Pattern PATTERN = Pattern.compile("SYNC\\s\\w+\\.\\w+(\\s\\d+){2}");
 
-
 	@Override
 	public boolean matches(String msg) {
 		Matcher matcher = PATTERN.matcher(msg);
-
 		return matcher.matches();
 	}
 
 	@Override
 	public void perform(FileCache cache, Socket socket, String msg) {
 		String[] splitMsg = msg.split(" ");
-		String fileName = splitMsg[0];
+		String fileName = splitMsg[1];
 		long lastModified = Long.valueOf(splitMsg[2]);
-		int fileSize = Integer.valueOf(splitMsg[3]);
 
 		// get list of all files in client root directory and
 		File folder = new File(cache.getRoot());
