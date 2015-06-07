@@ -27,7 +27,7 @@ public class FileMessage extends Message {
 		String[] splitMsg = msg.split(" ");
 
 		// add the filename to Client's list of files
-		client.addFile(splitMsg[1]);
+		client.addFile(splitMsg[1], splitMsg[2]);
 
 		downloadMissing(cache, socket, splitMsg);
 	}

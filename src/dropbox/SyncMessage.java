@@ -10,6 +10,7 @@ public class SyncMessage extends Message {
 	// SYNC [filename] [last modified] [filesize]
 	private final static Pattern PATTERN = Pattern.compile("SYNC\\s\\w+.\\w+(\\s\\d+){2}");
 
+
 	@Override
 	public boolean matches(String msg) {
 		Matcher matcher = PATTERN.matcher(msg);
