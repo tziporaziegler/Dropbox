@@ -102,8 +102,7 @@ public class Client extends World {
 
 	// FILES message creates new array to hold all FILE messages that will follow
 	public void createArray(int num) {
-		filenames[0] = new String[num];
-		filenames[1] = new String[num];
+		filenames = new String[2][num];
 		listPlace = 0;
 	}
 
