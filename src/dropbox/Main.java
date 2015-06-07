@@ -23,7 +23,7 @@ public class Main {
 			@Override
 			public void run() {
 				try {
-					new Client();
+					new Client("/dropbox/");
 				}
 				catch (IOException e) {
 					e.printStackTrace();

@@ -25,8 +25,8 @@ public class Client extends World {
 	private JButton uploadButton;
 	private int listPlace;
 
-	public Client() throws UnknownHostException, IOException {
-		super("/dropbox/");
+	public Client(String root) throws UnknownHostException, IOException {
+		super(root);
 
 		frame = new JFrame();
 		frame.setTitle("Dropbox");
@@ -138,4 +138,13 @@ public class Client extends World {
 		}
 
 	};
+	
+	public static void main(String [] args){
+		try {
+			new Client("/dropbox1/");
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

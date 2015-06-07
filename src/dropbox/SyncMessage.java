@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SyncMessage extends Message {
-	// SYNC [filename] [last modified] [filesize]
+	// SYNC 1[filename] 2[last modified] 3[filesize]
 	private final static Pattern PATTERN = Pattern.compile("SYNC\\s\\w+\\.\\w+(\\s\\d+){2}");
 
 
@@ -22,8 +22,8 @@ public class SyncMessage extends Message {
 	public void perform(FileCache cache, Socket socket, String msg) {
 		String[] splitMsg = msg.split(" ");
 		String fileName = splitMsg[0];
-		long lastModified = Long.valueOf(splitMsg[1]);
-		int fileSize = Integer.valueOf(splitMsg[2]);
+		long lastModified = Long.valueOf(splitMsg[2]);
+		int fileSize = Integer.valueOf(splitMsg[3]);
 
 		// get list of all files in client root directory and
 		File folder = new File(cache.getRoot());
