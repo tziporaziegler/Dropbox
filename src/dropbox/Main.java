@@ -31,5 +31,20 @@ public class Main {
 			}
 		};
 		thread.start();
+
+		try {
+			Thread.sleep(3000);
+		}
+		catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+
+		try {
+			new Client("/dropbox1/");
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 }

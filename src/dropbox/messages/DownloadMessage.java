@@ -1,10 +1,14 @@
-package dropbox;
+package dropbox.messages;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import dropbox.FileCache;
+import dropbox.Server;
+import dropbox.World;
 
 public class DownloadMessage extends Message {
 

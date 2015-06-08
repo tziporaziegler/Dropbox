@@ -1,10 +1,13 @@
-package dropbox;
+package dropbox.messages;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import dropbox.Client;
+import dropbox.FileCache;
 
 public class FileMessage extends Message {
 
@@ -45,7 +48,7 @@ public class FileMessage extends Message {
 		try {
 			for (File clientFile : listOfFiles) {
 				// see if this file exists in the clients directory
-				if ((clientFile.getName()).compareTo(fileName) == 0) {
+				if ((clientFile.getName()).equals(fileName)) {
 					// file is found so now compare when last modified from files in server's cache
 					found = true;
 					if (clientFile.lastModified() < lastModified) {

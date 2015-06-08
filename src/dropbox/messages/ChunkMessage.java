@@ -1,9 +1,11 @@
-package dropbox;
+package dropbox.messages;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import dropbox.World;
 
 public abstract class ChunkMessage extends Message {
 

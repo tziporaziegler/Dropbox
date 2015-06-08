@@ -21,14 +21,6 @@ public class FileCache {
 		return folder.listFiles();
 	}
 
-	/*public void addChunk(Chunk chunk) {
-
-	}
-
-	public Chunk getChunk(String username, String filename, int start, int length) {
-		return new Chunk(username, filename, start, length);
-	}*/
-
 	public ArrayList<String> getFileNames() {
 		File folder = new File(root);
 

@@ -1,6 +1,9 @@
-package dropbox;
+package dropbox.messages;
 
 import java.net.Socket;
+
+import dropbox.Client;
+import dropbox.FileCache;
 
 public class ChunkServer extends ChunkMessage {
 

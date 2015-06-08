@@ -1,4 +1,4 @@
-package dropbox;
+package dropbox.messages;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import dropbox.FileCache;
 
 public class ListMessage extends Message {
 

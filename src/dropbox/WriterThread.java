@@ -7,8 +7,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import dropbox.messages.Message;
+
 public class WriterThread extends Thread {
-	private LinkedBlockingQueue<Message> msgQueue;
+	/*private LinkedBlockingQueue<Message> msgQueue;
 	private ArrayList<Socket> sockets;
 	private Message currentMsg;
 
@@ -33,5 +35,5 @@ public class WriterThread extends Thread {
 				e.printStackTrace();
 			}
 		}
-	}
+	}*/
 }

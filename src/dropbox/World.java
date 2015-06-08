@@ -13,6 +13,8 @@ import java.util.List;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 
+import dropbox.messages.Message;
+
 public class World implements ReaderListener {
 	protected Socket socket;
 	protected String root;
@@ -20,8 +22,8 @@ public class World implements ReaderListener {
 	protected List<Message> validMsgs;
 
 	// store file in middle of writing to
-	private RandomAccessFile currentRAFile;
-	private int currentOffsetTotal;
+	protected RandomAccessFile currentRAFile;
+	protected int currentOffsetTotal;
 
 	public World(String root) {
 		this.root = root;

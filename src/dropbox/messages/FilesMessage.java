@@ -1,15 +1,18 @@
-package dropbox;
+package dropbox.messages;
 
 import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import dropbox.Client;
+import dropbox.FileCache;
 
 public class FilesMessage extends Message {
 
 	// FILES [number of files]
 	private final static Pattern PATTERN = Pattern.compile("FILES\\s\\d+");
 	private Client client;
-	
+
 	public FilesMessage(Client client) {
 		this.client = client;
 	}

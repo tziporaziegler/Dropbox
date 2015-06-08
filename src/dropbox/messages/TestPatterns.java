@@ -1,4 +1,4 @@
-package dropbox;
+package dropbox.messages;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,8 +46,10 @@ public class TestPatterns {
 	public void testSync() {
 		String pattern = "SYNC\\s\\w+\\.\\w+(\\s\\d+){2}";
 		Assert.assertTrue(matches(pattern, "SYNC compileData.txt 1433305636000 30"));
+		Assert.assertTrue(matches(pattern, "SYNC compileInstructions2.txt 1433734571000 1546"));
 		Assert.assertFalse(matches(pattern, "SYNC compileData 1433305636000 30"));
 		Assert.assertFalse(matches(pattern, "SYNC compileData.txt 1433305636000 30 "));
+
 	}
 
 	public boolean matches(String pat, String msg) {

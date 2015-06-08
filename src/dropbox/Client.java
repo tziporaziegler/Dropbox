@@ -18,6 +18,11 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
+import dropbox.messages.ChunkServer;
+import dropbox.messages.FileMessage;
+import dropbox.messages.FilesMessage;
+import dropbox.messages.SyncMessage;
+
 public class Client extends World {
 	private JFrame frame;
 	private String[][] filenames;
@@ -64,7 +69,7 @@ public class Client extends World {
 	private void checkUpload() throws FileNotFoundException, IOException {
 		ArrayList<String> clientFiles = cache.getFileNames();
 
-		if (filenames == null) {
+		if (filenames == null || filenames.length == 0) {
 			for (String clientFile : clientFiles) {
 				File file = cache.getFile(clientFile);
 				sendChunkMsg(file, socket);
@@ -80,15 +85,15 @@ public class Client extends World {
 					sendChunkMsg(file, socket);
 				}
 
-				else if (filenamesList.contains(clientFile)){
+				else if (filenamesList.contains(clientFile)) {
 					long clientLastModified = (cache.getFile(clientFile)).lastModified();
-					for(int i = 0; i < filenames.length; i++){
+					for (int i = 0; i < filenames.length; i++) {
 						// find filename in the server files
-						if(filenames[0][i].equals(clientFile)){
-							//get the last modified of the file
+						if (filenames[0][i].equals(clientFile)) {
+							// get the last modified of the file
 							long serverLastModified = Long.valueOf(filenames[1][i]);
-							//check if the server file is not up to date
-							if(clientLastModified > serverLastModified){
+							// check if the server file is not up to date
+							if (clientLastModified > serverLastModified) {
 								File file = cache.getFile(clientFile);
 								sendChunkMsg(file, socket);
 							}
@@ -136,15 +141,5 @@ public class Client extends World {
 				e.printStackTrace();
 			}
 		}
-
 	};
-	
-	public static void main(String [] args){
-		try {
-			new Client("/dropbox1/");
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 }
