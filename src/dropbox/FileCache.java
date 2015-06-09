@@ -13,7 +13,7 @@ public class FileCache {
 		// create dropbox directory
 		// will only create the directory if it doesn't exist
 		// FIXME won't automatically generate file on mac since need authentication
-		new File(root).mkdir();
+		new File(root).mkdirs();
 	}
 
 	public File[] getFiles() {
