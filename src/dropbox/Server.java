@@ -23,7 +23,7 @@ public class Server extends World {
 		serverSocket = new ServerSocket(6003);
 		sockets = new ArrayList<Socket>();
 
-		populateValidMsgs(new ChunkClient(this), new DownloadMessage(this), new ListMessage());
+		populateValidMsgs(new ChunkClient(this), new DownloadMessage(this), new ListMessage(this));
 
 		while (true) {
 			socket = serverSocket.accept();
@@ -45,20 +45,20 @@ public class Server extends World {
 
 		if (filesize - currentOffsetTotal < 512) {
 			currentOffsetTotal = 0;
-			// send SYNC message to all sockets in arrat
+			// send SYNC message to all sockets in array except the socket that uploaded the file
 			for (Socket currentSock : sockets) {
-				// if (currentSock != socket) {
-				try {
-					System.out.println("Server sending " + syncMsg + " to socket " + currentSock);
-					OutputStream out = currentSock.getOutputStream();
-					PrintWriter writer = new PrintWriter(out);
-					writer.println(syncMsg);
-					writer.flush();
-				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
-				// }
+				//if (currentSock != socket) {
+					try {
+						System.out.println("Server sending " + syncMsg + " to socket " + currentSock);
+						OutputStream out = currentSock.getOutputStream();
+						PrintWriter writer = new PrintWriter(out);
+						writer.println(syncMsg);
+						writer.flush();
+					}
+					catch (IOException e) {
+						e.printStackTrace();
+					}
+				//}
 			}
 		}
 	}

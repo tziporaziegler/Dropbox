@@ -7,11 +7,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dropbox.FileCache;
+import dropbox.World;
 
 public class SyncMessage extends Message {
 	// SYNC 1[filename] 2[last modified] 3[filesize]
 	private final static Pattern PATTERN = Pattern.compile("SYNC\\s\\w+\\.\\w+(\\s\\d+){2}");
+	private World world;
 
+	public SyncMessage(World world){
+		this.world = world;
+	}
+	
 	@Override
 	public boolean matches(String msg) {
 		Matcher matcher = PATTERN.matcher(msg);
@@ -40,14 +46,16 @@ public class SyncMessage extends Message {
 					if (clientFile.lastModified() < lastModified) {
 						// now need to send download msg to server
 						// DOWNLOAD [filename] [offset] [chunk size]
-						send("DOWNLOAD " + fileName, socket);
+						System.out.println("sync download becuase of last modified");
+						world.send("DOWNLOAD " + fileName, socket);
 					}
 					break;
 				}
 			}
 			// file is not on clients dir so send download msg
 			if (!found) {
-				send("DOWNLOAD " + fileName, socket);
+				System.out.println("sync download becuase never existed");
+				world.send("DOWNLOAD " + fileName, socket);
 			}
 		}
 		catch (IOException e) {

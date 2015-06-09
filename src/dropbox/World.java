@@ -77,9 +77,7 @@ public class World implements ReaderListener {
 			String string64 = new String(base64);
 
 			// CHUNK [filename] [last modified] [filesize] [offset] [base64 encoded bytes]
-			String msg = "CHUNK " + file.getName() + " " + file.lastModified() + " " + size + " " + offset + " " + string64;
-			send(msg);
-			System.out.println(this + " sending " + msg);
+			send("CHUNK " + file.getName() + " " + file.lastModified() + " " + size + " " + offset + " " + string64, socket);
 
 			// add 512 to offset for next chunk
 			offset += 512;
@@ -89,7 +87,8 @@ public class World implements ReaderListener {
 		randomFile.close();
 	}
 
-	protected void send(String msg) throws IOException {
+	public void send(String msg, Socket socket) throws IOException {
+		System.out.println(msg);
 		OutputStream out = socket.getOutputStream();
 		PrintWriter writer = new PrintWriter(out);
 		writer.println(msg);

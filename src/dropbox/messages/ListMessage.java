@@ -8,11 +8,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dropbox.FileCache;
+import dropbox.World;
 
 public class ListMessage extends Message {
-
 	// LIST
 	private final static Pattern PATTERN = Pattern.compile("LIST");
+	private World world;
+
+	public ListMessage(World world) {
+		this.world = world;
+	}
 
 	@Override
 	public boolean matches(String msg) {
@@ -37,15 +42,13 @@ public class ListMessage extends Message {
 			if (listOfFiles != null) {
 				// send message with the number of files
 				String filesMsg = "FILES " + listOfFiles.length;
-				send(filesMsg, socket);
-				System.out.println("List sending " + filesMsg);
+				world.send(filesMsg, socket);
 
 				// for each file message with the data
 				for (File file : listOfFiles) {
 					if (file.isFile()) {
 						String fileMsg = "FILE " + file.getName() + " " + file.lastModified() + " " + file.length();
-						send(fileMsg, socket);
-						System.out.println("List sending " + fileMsg);
+						world.send(fileMsg, socket);
 					}
 				}
 			}

@@ -10,6 +10,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -17,6 +20,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
+
+import org.apache.commons.io.FileUtils;
 
 import dropbox.messages.ChunkServer;
 import dropbox.messages.FileMessage;
@@ -29,6 +34,7 @@ public class Client extends World {
 	private JList<String> list;
 	private JButton uploadButton;
 	private int listPlace;
+	private ScheduledExecutorService executor;
 
 	public Client(String root) throws UnknownHostException, IOException {
 		super(root);
@@ -54,17 +60,32 @@ public class Client extends World {
 		socket = new Socket("localhost", 6003);
 		new ReaderThread(socket, this).start();
 
-		populateValidMsgs(new ChunkServer(this), new FileMessage(this), new FilesMessage(this), new SyncMessage());
+		populateValidMsgs(new ChunkServer(this), new FileMessage(this), new FilesMessage(this), new SyncMessage(this));
 
 		frame.setVisible(true);
 
-		// retrieve list of files on server and automtiacally download any missing files or files that are not up to date
-		send("LIST");
-		System.out.println("Client sending LIST");
+		// retrieve all new and updated files from server
+		send("LIST", socket);
 
-		// check if have any files that server doesn't or any newer file versions than server. If yes, upload files to server.
-		checkUpload();
+		// retrieve list of files on server and automatically download any missing files or files that are not up to date
+		executor = Executors.newScheduledThreadPool(1);
+		executor.scheduleAtFixedRate(uploadExecute, 0, 7, TimeUnit.SECONDS);
 	}
+
+	// check every 7 seconds if there are any new files to upload and update JList
+	private Runnable uploadExecute = new Runnable() {
+		public void run() {
+			list.setListData(cache.getFileNamesArray());
+
+			try {
+				// check if have any files that server doesn't or any newer file versions than server. If yes, upload files to server.
+				checkUpload();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	};
 
 	private void checkUpload() throws FileNotFoundException, IOException {
 		ArrayList<String> clientFiles = cache.getFileNames();
@@ -115,9 +136,10 @@ public class Client extends World {
 	public void addFile(String filename, String lastModified) {
 		filenames[0][listPlace] = filename;
 		filenames[1][listPlace] = lastModified;
-		if (listPlace == filenames.length - 1) {
+		if (listPlace == filenames[0].length - 1) {
+			// FIXME not updating the list as soon as new file is detected
 			// once the correct amount of filenames are received, add the list to the jFrame
-			list.setListData(filenames[0]);
+			list.setListData(cache.getFileNamesArray());
 		}
 		else {
 			listPlace++;
@@ -129,13 +151,19 @@ public class Client extends World {
 		public void actionPerformed(ActionEvent event) {
 			try {
 				// choose file
-				File file = null;
+				File source = null;
 				JFileChooser chooser = new JFileChooser();
 				int returnVal = chooser.showOpenDialog(frame.getParent());
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					file = chooser.getSelectedFile();
+					source = chooser.getSelectedFile();
 				}
-				sendChunkMsg(file, socket);
+
+				File dest = new File(root + source.getName());
+				FileUtils.copyFile(source, dest);
+
+				list.setListData(cache.getFileNamesArray());
+
+				sendChunkMsg(dest, socket);
 			}
 			catch (IOException e) {
 				e.printStackTrace();

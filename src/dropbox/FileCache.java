@@ -22,25 +22,25 @@ public class FileCache {
 	}
 
 	public ArrayList<String> getFileNames() {
-		File folder = new File(root);
-
-		// get list of all files in root directory, excluding hidden and system files
-		File[] listOfFiles = folder.listFiles(new FileFilter() {
-			@Override
-			public boolean accept(File file) {
-				return !file.isHidden();
-			}
-		});
-
+		File[] listOfFiles = new File(root).listFiles(filter);
 		ArrayList<String> listOfFileNames = new ArrayList<String>();
-
-		for (int i = 0; i < listOfFiles.length; i++) {
-			File file = listOfFiles[i];
+		for (File file : listOfFiles) {
 			if (file.isFile()) {
 				listOfFileNames.add(file.getName());
 			}
 		}
+		return listOfFileNames;
+	}
 
+	public String[] getFileNamesArray() {
+		File[] listOfFiles = new File(root).listFiles(filter);
+		String[] listOfFileNames = new String[listOfFiles.length];
+		for (int i = 0; i < listOfFiles.length; i++) {
+			File file = listOfFiles[i];
+			if (file.isFile()) {
+				listOfFileNames[i] = file.getName();
+			}
+		}
 		return listOfFileNames;
 	}
 
@@ -57,4 +57,12 @@ public class FileCache {
 		}
 		return null;
 	}
+
+	// when get list of all files in root directory, filter excludes hidden and system files
+	FileFilter filter = new FileFilter() {
+		@Override
+		public boolean accept(File file) {
+			return !file.isHidden();
+		}
+	};
 }

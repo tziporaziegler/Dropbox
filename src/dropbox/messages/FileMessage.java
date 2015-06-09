@@ -54,18 +54,14 @@ public class FileMessage extends Message {
 					if (clientFile.lastModified() < lastModified) {
 						// now need to send download msg to server
 						// DOWNLOAD [filename]
-						String msg = "DOWNLOAD " + fileName;
-						send(msg, socket);
-						System.out.println("File sending " + msg + " (lastModified not up to date)");
+						client.send("DOWNLOAD " + fileName, socket);
 					}
 					break;
 				}
 			}
 			// file is not on clients dir so send download msg
 			if (!found) {
-				String msg = "DOWNLOAD " + fileName;
-				send(msg, socket);
-				System.out.println("File sending " + msg + " (file never existed)");
+				client.send("DOWNLOAD " + fileName, socket);
 			}
 		}
 		catch (IOException e) {
