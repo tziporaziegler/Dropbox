@@ -3,8 +3,7 @@
 
 <project basedir="." default="run" name="Dropbox">
     <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../../Applications/eclipse/"/>
-	
+
 	<property name="main-class" value="dropbox.Main"/>
 	
 	<property name="src.dir" location="src"/>	
@@ -21,23 +20,14 @@
     <property name="target" value="1.7"/>
     <property name="source" value="1.7"/>
 	
-    <path id="JUnit 4.libraryclasspath">
-        <pathelement location="${ECLIPSE_HOME}plugins/org.junit_4.11.0.v201303080030/junit.jar"/>
-        <pathelement location="${ECLIPSE_HOME}plugins/org.hamcrest.core_1.3.0.v201303031735.jar"/>
-    </path>
-	
     <path id="classpath">
         <pathelement location="${bin.dir}"/>
         <pathelement location="${lib.dir}/commons-io-2.4.jar"/>
         <pathelement location="${lib.dir}/commons-codec-1.10.jar"/>
-        <path refid="JUnit 4.libraryclasspath"/>
+    	<pathelement location="${lib.dir}/junit-4.11.jar" />
+    	<pathelement location="${lib.dir}/hamcrest-core-1.3.jar" />
     </path>
 	
-	<path id="classpath.test">
-		<path refid="classpath" />
-		<pathelement location="${lib.dir}/junit-4.11.jar" />
-		<pathelement location="${lib.dir}/hamcrest-core-1.3.jar" />
-	</path>
 	
     <target name="init">
         <mkdir dir="${bin.dir}"/> 	
@@ -63,7 +53,7 @@
     	<mkdir dir="${test.src.dir}"/>  
     	<mkdir dir="${test.build.dir}"/>
     	<javac srcdir="${test.src.dir}" destdir="${test.build.dir}" includeantruntime="false">
-    		<classpath refid="classpath.test"/>
+    		<classpath refid="classpath"/>
     		<!--<classpath>
 	            <pathelement location="${junit}"/>
 	        </classpath>-->
