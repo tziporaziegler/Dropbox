@@ -11,7 +11,8 @@
 	<property name="bin.dir" location="bin"/>
 	<property name="lib.dir" location="lib"/>
 	<property name="dist.dir" location="dist"/>
-	<!--<property name="test.dir"  location="test"/>-->
+	<property name="test.build.dir" value="${bin.dir}/test" />
+	<property name="test.src.dir" value="test" />
 	
     <property name="junit.output.dir" value="junit"/>
 	<path id="application" location="${dist.dir}/${ant.project.name}.jar"/>
@@ -32,8 +33,15 @@
         <path refid="JUnit 4.libraryclasspath"/>
     </path>
 	
+	<path id="classpath.test">
+		<path refid="classpath" />
+		<pathelement location="${lib.dir}/junit-4.11.jar" />
+		<pathelement location="${lib.dir}/hamcrest-core-1.3.jar" />
+	</path>
+	
     <target name="init">
-        <mkdir dir="${bin.dir}"/>
+        <mkdir dir="${bin.dir}"/> 	
+    		
         <copy includeemptydirs="false" todir="${bin.dir}">
             <fileset dir="${src.dir}">
                 <exclude name="**/*.launch"/>
@@ -47,21 +55,28 @@
             <src path="${src.dir}"/>
             <classpath refid="classpath"/>
         </javac>
-	    <!--<javac srcdir="${test.dir}" destdir="${bin.dir}/test">
-	      <classpath>
-	        <pathelement location="${junit}"/>
-	      </classpath>
-	    </javac>-->
 	 </target>
 	    	
     <target name="build" depends="compile" >
         <echo message="${ant.project.name}: ${ant.file}"/>  
+    	
+    	<mkdir dir="${test.src.dir}"/>  
+    	<mkdir dir="${test.build.dir}"/>
+    	<javac srcdir="${test.src.dir}" destdir="${test.build.dir}" includeantruntime="false">
+    		<classpath refid="classpath.test"/>
+    		<!--<classpath>
+	            <pathelement location="${junit}"/>
+	        </classpath>-->
+    	</javac>
+	    <echo message="build done" />
     </target>
 	
     <target name="clean">
         <delete dir="${bin.dir}"/>
+    	<delete dir="${test.build.dir}"/>
     	<delete dir="${dist.dir}"/>
     	<delete dir="${junit.output.dir}"/>
+    	<echo message="clean done"/>
     </target>
 	
 	<target name="clean-all" depends="clean"/>
@@ -109,14 +124,14 @@
         </jar>
 	</target> 
     	
-	<target name="test" depends="build">
+	<target name="test" depends="clean-build">
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="yes">
             <classpath>
                 <path refid="classpath"/>
                 <path refid="application"/>
             </classpath>
-            
+        	
             <formatter type="xml"/>
             
         	<test name="dropbox.messages.TestPatterns"
