@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse.ant.import?>
+
+<project basedir="." default="run" name="Dropbox">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../Applications/eclipse/"/>
+	
+	<property name="main-class" value="dropbox.Main"/>
+	
+	<property name="src.dir" location="src"/>	
+	<property name="bin.dir" location="bin"/>
+	<property name="lib.dir" location="lib"/>
+	<property name="dist.dir" location="dist"/>
+	<!--<property name="test.dir"  location="test"/>-->
+	
+    <property name="junit.output.dir" value="junit"/>
+	<path id="application" location="${dist.dir}/${ant.project.name}.jar"/>
+	
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+	
+    <path id="JUnit 4.libraryclasspath">
+        <pathelement location="${ECLIPSE_HOME}plugins/org.junit_4.11.0.v201303080030/junit.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.hamcrest.core_1.3.0.v201303031735.jar"/>
+    </path>
+	
+    <path id="classpath">
+        <pathelement location="${bin.dir}"/>
+        <pathelement location="${lib.dir}/commons-io-2.4.jar"/>
+        <pathelement location="${lib.dir}/commons-codec-1.10.jar"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+    </path>
+	
+    <target name="init">
+        <mkdir dir="${bin.dir}"/>
+        <copy includeemptydirs="false" todir="${bin.dir}">
+            <fileset dir="${src.dir}">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+	
+	<target name="compile" depends="init" description="compile">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${bin.dir}" includeantruntime="false" source="${source}" target="${target}">
+            <src path="${src.dir}"/>
+            <classpath refid="classpath"/>
+        </javac>
+	    <!--<javac srcdir="${test.dir}" destdir="${bin.dir}/test">
+	      <classpath>
+	        <pathelement location="${junit}"/>
+	      </classpath>
+	    </javac>-->
+	 </target>
+	    	
+    <target name="build" depends="compile" >
+        <echo message="${ant.project.name}: ${ant.file}"/>  
+    </target>
+	
+    <target name="clean">
+        <delete dir="${bin.dir}"/>
+    	<delete dir="${dist.dir}"/>
+    	<delete dir="${junit.output.dir}"/>
+    </target>
+	
+	<target name="clean-all" depends="clean"/>
+	<target name="clean-build" depends="clean,build"/>
+	
+	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+	
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+	
+    <target name="Main" depends="test" description="Start the Server and Client">
+        <java classname="dropbox.Main" failonerror="true" fork="yes">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+    	
+    <target name="Client" depends="test" description="Start the Client">
+        <java classname="dropbox.Client" failonerror="true" fork="yes">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+	
+    <target name="Server" depends="test" description="Start the Server">
+        <java classname="dropbox.Server" failonerror="true" fork="yes">
+            <classpath refid="classpath"/>
+        </java>
+    </target>      
+	
+	<target name="dist" depends="test">
+         <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/${ant.project.name}.jar" basedir="${bin.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+	</target> 
+    	
+	<target name="test" depends="build">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="yes">
+            <classpath>
+                <path refid="classpath"/>
+                <path refid="application"/>
+            </classpath>
+            
+            <formatter type="xml"/>
+            
+        	<test name="dropbox.messages.TestPatterns"
+        		todir="${junit.output.dir}"
+        		haltonfailure="yes"/>
+        	
+        	<!--<batchtest fork="yes" todir="tres">
+		        <formatter type="brief" usefile="false"/>
+		        <fileset dir="${test}">
+		          <include name="**/*Test*.java"/>
+		        </fileset>
+		      </batchtest>-->
+        </junit>
+    </target>
+	    
+    <!--<target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>--> 
+
+	 <target name="run" depends="dist">
+        <java fork="true" classname="${main-class}">
+            <classpath>
+                <path refid="classpath"/>
+                <path refid="application"/>
+            </classpath>
+        </java>
+	 </target>
+</project>
