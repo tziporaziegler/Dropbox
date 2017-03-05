@@ -59,7 +59,7 @@ public class FileCache {
 	}
 
 	// when get list of all files in root directory, filter excludes hidden and system files
-	FileFilter filter = new FileFilter() {
+	private FileFilter filter = new FileFilter() {
 		@Override
 		public boolean accept(File file) {
 			return !file.isHidden();

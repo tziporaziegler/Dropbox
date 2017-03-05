@@ -146,7 +146,7 @@ public class Client extends World {
 		}
 	}
 
-	ActionListener uploadClick = new ActionListener() {
+	private ActionListener uploadClick = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			try {

@@ -1,6 +1,6 @@
 package dropbox;
 
-import java.io.IOException;
+/*import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -10,7 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import dropbox.messages.Message;
 
 public class WriterThread extends Thread {
-	/*private LinkedBlockingQueue<Message> msgQueue;
+	private LinkedBlockingQueue<Message> msgQueue;
 	private ArrayList<Socket> sockets;
 	private Message currentMsg;
 
@@ -35,5 +35,5 @@ public class WriterThread extends Thread {
 				e.printStackTrace();
 			}
 		}
-	}*/
-}
+	}
+}*/
