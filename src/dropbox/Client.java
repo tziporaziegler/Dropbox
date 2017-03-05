@@ -32,9 +32,7 @@ public class Client extends World {
 	private JFrame frame;
 	private String[][] filenames;
 	private JList<String> list;
-	private JButton uploadButton;
 	private int listPlace;
-	private ScheduledExecutorService executor;
 
 	public Client(String root) throws UnknownHostException, IOException {
 		super(root);
@@ -50,7 +48,7 @@ public class Client extends World {
 		panel.setLayout(new BoxLayout(panel, 1));
 		frame.add(panel, BorderLayout.NORTH);
 
-		uploadButton = new JButton("UPLOAD");
+		JButton uploadButton = new JButton("UPLOAD");
 		uploadButton.addActionListener(uploadClick);
 		panel.add(uploadButton);
 
@@ -68,7 +66,7 @@ public class Client extends World {
 		send("LIST", socket);
 
 		// retrieve list of files on server and automatically download any missing files or files that are not up to date
-		executor = Executors.newScheduledThreadPool(1);
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		executor.scheduleAtFixedRate(uploadExecute, 0, 7, TimeUnit.SECONDS);
 	}
 

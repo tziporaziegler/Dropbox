@@ -14,13 +14,12 @@ import dropbox.messages.DownloadMessage;
 import dropbox.messages.ListMessage;
 
 public class Server extends World {
-	private ServerSocket serverSocket;
 	private ArrayList<Socket> sockets;
 	private String syncMsg;
 
 	public Server() throws IOException {
 		super("./dropbox_server/");
-		serverSocket = new ServerSocket(8181);
+		ServerSocket serverSocket = new ServerSocket(8181);
 		sockets = new ArrayList<Socket>();
 
 		populateValidMsgs(new ChunkClient(this), new DownloadMessage(this), new ListMessage(this));
