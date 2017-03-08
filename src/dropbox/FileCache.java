@@ -8,6 +8,14 @@ public class FileCache {
 	// private static final String ROOT = "/dropbox/";
 	private String root;
 
+	// when get list of all files in root directory, filter excludes hidden and system files
+	private FileFilter filter = new FileFilter() {
+		@Override
+		public boolean accept(File file) {
+			return !file.isHidden();
+		}
+	};
+	
 	public FileCache(String root) {
 		this.root = root;
 		// create dropbox directory
@@ -57,12 +65,4 @@ public class FileCache {
 		}
 		return null;
 	}
-
-	// when get list of all files in root directory, filter excludes hidden and system files
-	private FileFilter filter = new FileFilter() {
-		@Override
-		public boolean accept(File file) {
-			return !file.isHidden();
-		}
-	};
 }
