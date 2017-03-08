@@ -12,7 +12,7 @@ import dropbox.World;
 
 public class ListMessage extends Message {
 	// LIST
-	private final static Pattern PATTERN = Pattern.compile("LIST");
+	private static final Pattern PATTERN = Pattern.compile("LIST");
 	private World world;
 
 	public ListMessage(World world) {

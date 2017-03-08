@@ -11,13 +11,13 @@ import dropbox.World;
 
 public class SyncMessage extends Message {
 	// SYNC 1[filename] 2[last modified] 3[filesize]
-	private final static Pattern PATTERN = Pattern.compile("SYNC\\s\\w+\\.\\w+(\\s\\d+){2}");
+	private static final Pattern PATTERN = Pattern.compile("SYNC\\s\\w+\\.\\w+(\\s\\d+){2}");
 	private World world;
 
-	public SyncMessage(World world){
+	public SyncMessage(World world) {
 		this.world = world;
 	}
-	
+
 	@Override
 	public boolean matches(String msg) {
 		Matcher matcher = PATTERN.matcher(msg);

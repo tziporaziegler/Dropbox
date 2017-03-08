@@ -10,7 +10,7 @@ import dropbox.FileCache;
 public class FilesMessage extends Message {
 
 	// FILES [number of files]
-	private final static Pattern PATTERN = Pattern.compile("FILES\\s\\d+");
+	private static final Pattern PATTERN = Pattern.compile("FILES\\s\\d+");
 	private Client client;
 
 	public FilesMessage(Client client) {

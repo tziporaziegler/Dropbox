@@ -13,7 +13,7 @@ import dropbox.World;
 public class DownloadMessage extends Message {
 
 	// DOWNLOAD [filename]
-	private final static Pattern PATTERN = Pattern.compile("DOWNLOAD\\s\\w+\\.\\w+");
+	private static final Pattern PATTERN = Pattern.compile("DOWNLOAD\\s\\w+\\.\\w+");
 	private World world;
 
 	public DownloadMessage(Server server) {

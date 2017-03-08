@@ -34,6 +34,47 @@ public class Client extends World {
 	private JList<String> list;
 	private int listPlace;
 
+	// check every 7 seconds if there are any new files to upload and update JList
+	private Runnable uploadExecute = new Runnable() {
+		public void run() {
+			list.setListData(cache.getFileNamesArray());
+
+			try {
+				// check if have any files that server doesn't or any newer file versions than server. If yes, upload
+				// files to server.
+				checkUpload();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	};
+
+	private ActionListener uploadClick = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			try {
+				// choose file
+				File source = null;
+				JFileChooser chooser = new JFileChooser();
+				int returnVal = chooser.showOpenDialog(frame.getParent());
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					source = chooser.getSelectedFile();
+				}
+
+				File dest = new File(root + source.getName());
+				FileUtils.copyFile(source, dest);
+
+				list.setListData(cache.getFileNamesArray());
+
+				sendChunkMsg(dest, socket);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	};
+
 	public Client(String root) throws UnknownHostException, IOException {
 		super(root);
 
@@ -65,25 +106,11 @@ public class Client extends World {
 		// retrieve all new and updated files from server
 		send("LIST", socket);
 
-		// retrieve list of files on server and automatically download any missing files or files that are not up to date
+		// retrieve list of files on server and automatically download any missing files or files that
+		// are not up to date
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		executor.scheduleAtFixedRate(uploadExecute, 0, 7, TimeUnit.SECONDS);
 	}
-
-	// check every 7 seconds if there are any new files to upload and update JList
-	private Runnable uploadExecute = new Runnable() {
-		public void run() {
-			list.setListData(cache.getFileNamesArray());
-
-			try {
-				// check if have any files that server doesn't or any newer file versions than server. If yes, upload files to server.
-				checkUpload();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	};
 
 	private void checkUpload() throws FileNotFoundException, IOException {
 		ArrayList<String> clientFiles = cache.getFileNames();
@@ -143,31 +170,6 @@ public class Client extends World {
 			listPlace++;
 		}
 	}
-
-	private ActionListener uploadClick = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			try {
-				// choose file
-				File source = null;
-				JFileChooser chooser = new JFileChooser();
-				int returnVal = chooser.showOpenDialog(frame.getParent());
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					source = chooser.getSelectedFile();
-				}
-
-				File dest = new File(root + source.getName());
-				FileUtils.copyFile(source, dest);
-
-				list.setListData(cache.getFileNamesArray());
-
-				sendChunkMsg(dest, socket);
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	};
 
 	public static void main(String[] args) {
 		try {

@@ -12,7 +12,7 @@ import dropbox.FileCache;
 public class FileMessage extends Message {
 
 	// 0FILE 1[filename] 2[last modified] 3[filesize]
-	private final static Pattern PATTERN = Pattern.compile("FILE\\s\\w+\\.\\w+(\\s\\d+){2}");
+	private static final Pattern PATTERN = Pattern.compile("FILE\\s\\w+\\.\\w+(\\s\\d+){2}");
 	private Client client;
 
 	public FileMessage(Client client) {
