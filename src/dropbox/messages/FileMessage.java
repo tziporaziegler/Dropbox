@@ -48,7 +48,7 @@ public class FileMessage extends Message {
 		try {
 			for (File clientFile : listOfFiles) {
 				// see if this file exists in the clients directory
-				if ((clientFile.getName()).equals(fileName)) {
+				if (clientFile.getName().equals(fileName)) {
 					// file is found so now compare when last modified from files in server's cache
 					found = true;
 					if (clientFile.lastModified() < lastModified) {

@@ -130,9 +130,8 @@ public class Client extends World {
 					// upload clientFile
 					sendChunkMsg(file, socket);
 				}
-
 				else if (filenamesList.contains(clientFile)) {
-					long clientLastModified = (cache.getFile(clientFile)).lastModified();
+					long clientLastModified = cache.getFile(clientFile).lastModified();
 					for (int i = 0; i < filenames.length; i++) {
 						// find filename in the server files
 						if (filenames[0][i].equals(clientFile)) {
