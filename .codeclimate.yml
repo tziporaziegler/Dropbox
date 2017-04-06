@@ -5,6 +5,9 @@ engines:
     checks:
       com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck:
         enabled: false
+      com.puppycrawl.tools.checkstyle.checks.blocks.RightCurlyCheck:
+        enabled: true
+        option: "alone_or_singleline"
   pmd:
     enabled: true
     channel: "beta"
