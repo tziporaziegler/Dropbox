@@ -7,7 +7,7 @@ engines:
         enabled: false
       com.puppycrawl.tools.checkstyle.checks.blocks.RightCurlyCheck:
         enabled: true
-        option: "alone_or_singleline"
+        option: alone_or_singleline
   pmd:
     enabled: true
     channel: "beta"
