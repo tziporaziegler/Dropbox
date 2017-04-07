@@ -2,11 +2,7 @@ engines:
   checkstyle:
     enabled: true
     channel: "beta"
-    checks:
-      com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck:
-        enabled: false
-      com.puppycrawl.tools.checkstyle.checks.blocks.RightCurlyCheck:
-        enabled: true
+    config: "config/checkstyle.xml"
   pmd:
     enabled: true
     channel: "beta"
