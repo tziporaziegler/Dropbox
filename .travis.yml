@@ -2,3 +2,6 @@ language: java
 sudo: false
 notifications:
   email: false
+
+before_install:
+   - sudo apt-get install ant-optional
